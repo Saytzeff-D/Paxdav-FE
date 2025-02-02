@@ -4,8 +4,8 @@ import { Link } from 'react-router-dom'
 
 const Navbar = ()=>{
     return (
-        <div className='pax-nav'>            
-            <nav data-aos="fade-down" className="navbar navbar-expand-lg bg-body-white text-white">
+        <div className='pax-nav mb-5'>            
+            <nav data-aos="fade-down" className="fixed-top pax-nav navbar navbar-expand-lg bg-body-white text-white">
                 <div className="container-fluid">
                     <a className="navbar-brand" href="/">
                         <img src={PaxDav} className='img-fluid ps-5' />

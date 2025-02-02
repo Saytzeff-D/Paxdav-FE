@@ -5,6 +5,7 @@ const Footer = ()=>{
     const [isSubscribing, setIsSubscribing] = useState(false)
     return (
         <div className="footer">
+            <hr className='container my-5' />
             <div className="container">
                 <p className="display-2 fw-500 text-white">
                     Make Sure of Your Choice Then Discuss With Us

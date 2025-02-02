@@ -20,3 +20,18 @@ ul {
   border: none !important;
   color: white !important
 }
+.port-caption {
+  bottom: 5px !important;
+  position: absolute !important;
+  left: 10px;
+  right: 10px;
+}
+.serv-card {
+  background-color: #000000 !important;
+}
+.contact {
+  border-radius: 20px !important;
+  border-bottom: none !important;
+  border-right: none !important;
+  border-color: #404040 !important;
+}
