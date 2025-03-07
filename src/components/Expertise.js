@@ -16,15 +16,15 @@ const Expertise = ()=>{
             <div className="row mx-auto w-100">
                 {
                     serv.map((each, i)=>(
-                        <div className="col-md-4">
-                            <div class="card border-none serv-card">
-                                <img class="card-img-top" src={each} alt="Card image" />
-                                <div class="card-body">
-                                    <h4 class="card-title">Shopify Development</h4>
-                                    <p class="card-text text-muted">
+                        <div key={i} className="col-md-4">
+                            <div className="card border-none serv-card">
+                                <img className="card-img-top" src={each} alt="Card image" />
+                                <div className="card-body">
+                                    <h4 className="card-title">Shopify Development</h4>
+                                    <p className="card-text text-muted">
                                         Custom, responsive websites designed to make your brand shine online
                                     </p>
-                                    <a class="btn bg-quote text-white rounded-pill px-4">Request Quote</a>
+                                    <a className="btn bg-quote text-white rounded-pill px-4">Request Quote</a>
                                 </div>
                             </div>
                         </div>

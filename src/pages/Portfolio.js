@@ -35,10 +35,10 @@ const Portfolio = ()=>{
                 <div className='row mx-auto w-100'>
                     {
                         port.map((each, i)=>(
-                            <div className='col-md-6 my-4'>
-                                <div class="card bg-dark">
-                                    <img class="card-img-top" src={each} alt="Card image" />
-                                    <div class="card-img-overlay">
+                            <div key={i} className='col-md-6 my-4'>
+                                <div className="card bg-dark">
+                                    <img className="card-img-top" src={each} alt="Card image" />
+                                    <div className="card-img-overlay">
                                         <div className='port-caption bg-white text-dark fs-5 text-uppercase fw-semibold px-2 py-3 rounded'>
                                             Education Website
                                         </div>
