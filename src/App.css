@@ -6,6 +6,11 @@
   background-size: cover;
   background-repeat: no-repeat;
 }
+.header {
+  background: url('./assets/HEADER.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+}
 .fw-500 {
   font-weight: 400 !important;
 }
@@ -14,6 +19,9 @@ ul {
 }
 .bg-quote {
   background-color: #01D564 !important;
+}
+.text-paxdav {
+  color: #01D564 !important;
 }
 .bg-quote-input {
   background-color: #27291C !important;
