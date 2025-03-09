@@ -43,3 +43,19 @@ ul {
   border-right: none !important;
   border-color: #404040 !important;
 }
+.bg-quote-form {
+  background-color: #808080 !important;
+}
+#quote-input::placeholder {
+  color: #4F4F4F !important;
+  font-size: small;
+}
+#quote-input {
+  font-size: small;
+}
+.quote-form-text {
+  color: #181818 !important;
+}
+.rounded-xl {
+  border-radius: 5% !important;
+}
