@@ -1,6 +1,8 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const Header = ()=>{
+    const navigate = useNavigate()
     return (
         <div className='header py-md-5'>
             <div className='d-md-none d-block '>
@@ -13,10 +15,10 @@ const Header = ()=>{
                             We design exceptional brands, products, web apps, websites for  startup and enterprises. 
                         </p>
                         <div className='d-flex justify-content-center my-5'>
-                            <button className="btn bg-quote rounded-pill fw-bold py-2 px-4 mx-2 rounded-0 text-white">
+                            <button onClick={()=>navigate('/request-quote')} className="btn bg-quote rounded-pill fw-bold py-2 px-4 mx-2 rounded-0 text-white">
                                 Request Quote
                             </button>
-                            <button className="btn btn-light py-2 px-4 mx-2 rounded-pill fw-bold rounded-0">
+                            <button onClick={()=>navigate('/portfolio')} className="btn btn-light py-2 px-4 mx-2 rounded-pill fw-bold rounded-0">
                                 View Portfolio
                             </button>
                         </div>
@@ -45,10 +47,10 @@ const Header = ()=>{
                             <span className='rounded-pill bg-quote px-5 py-0'>solutions</span>
                         </p>
                         <div className='d-flex justify-content-center my-5'>
-                            <button className="btn bg-quote rounded-pill fw-bold py-2 px-4 mx-2 rounded-0 text-white">
+                            <button onClick={()=>navigate('/request-quote')} className="btn bg-quote rounded-pill fw-bold py-2 px-4 mx-2 rounded-0 text-white">
                                 Request Quote
                             </button>
-                            <button className="btn btn-light py-2 px-4 mx-2 rounded-pill fw-bold rounded-0">
+                            <button onClick={()=>navigate('/portfolio')} className="btn btn-light py-2 px-4 mx-2 rounded-pill fw-bold rounded-0">
                                 View Portfolio
                             </button>
                         </div>
