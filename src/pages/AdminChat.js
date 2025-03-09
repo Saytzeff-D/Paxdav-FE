@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import io from "socket.io-client";
 
-const socket = io(process.env.REACT_APP_BASEURL);
+const socket = io('http://localhost:1000/');
 
 const AdminChat = () => {
   const [messages, setMessages] = useState([]);
@@ -36,9 +36,15 @@ const AdminChat = () => {
       setOnlineUsers(users); // Update online users list
     });
     
-    socket.on("message", (message) => {
-      setMessages((prevMessages) => [...prevMessages, message]);
-      setLastMessages((prev) => ({ ...prev, [message.sender]: message.text }));      
+    socket.on("message", (message) => {      
+      if (message.sender == activeUser._id) {
+        setMessages((prevMessages) => [...prevMessages, message]);
+      } else if(message.receiver == activeUser._id){
+        setMessages((prevMessages) => [...prevMessages, message]);
+      } else {
+        console.log('Not my own message')
+      }
+      // setLastMessages((prev) => ({ ...prev, [message.sender]: message.text }));      
     });    
     
     return () => {

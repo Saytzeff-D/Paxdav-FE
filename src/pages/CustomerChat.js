@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import io from "socket.io-client";
 
-const socket = io(process.env.REACT_APP_BASEURL);
+const socket = io('http://localhost:1000/');
 
 const CustomerChat = (props) => {
   const { uri } = props
@@ -29,11 +29,20 @@ const CustomerChat = (props) => {
         socket.on("messageHistory", (history) => {
           setMessages(history);
         });
-        socket.on("message", (message) => {
-          setMessages((prevMessages) => {
-            const isDuplicate = prevMessages.some(msg => msg.timestamp === message.timestamp && msg.text === message.text);
-            return isDuplicate ? prevMessages : [...prevMessages, message]
-          });
+        socket.on("message", (message) => {          
+          if (message.sender == params.id) {
+            setMessages((prevMessages) => {
+              const isDuplicate = prevMessages.some(msg => msg.timestamp === message.timestamp && msg.text === message.text);
+              return isDuplicate ? prevMessages : [...prevMessages, message]
+            });
+          } else if(message.receiver == params.id){
+            setMessages((prevMessages) => {
+              const isDuplicate = prevMessages.some(msg => msg.timestamp === message.timestamp && msg.text === message.text);
+              return isDuplicate ? prevMessages : [...prevMessages, message]
+            });
+          } else {
+            console.log('Not my own message')
+          }          
         });
         socket.on("onlineUsers", (users) => {
           setOnlineUsers(users); // Update online users list
