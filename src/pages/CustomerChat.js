@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import io from "socket.io-client";
 
-const socket = io('http://localhost:1000/');
+const socket = io(process.env.REACT_APP_BASEURL);
 
 const CustomerChat = (props) => {
   const { uri } = props

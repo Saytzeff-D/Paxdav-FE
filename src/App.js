@@ -12,13 +12,15 @@ import CustomerChat from './pages/CustomerChat';
 
 function App() {
   const location = useLocation()
-  const uri = 'http://localhost:1000/'
+  const uri = process.env.REACT_APP_BASEURL
   return (
     <div>
       {
         location.pathname !== '/admin-chat'
-        &&
+        ?
         <Navbar />
+        :
+        console.log()
       }
       <Routes>
         <Route path='/' element={<Home />} />
@@ -29,6 +31,17 @@ function App() {
         <Route path='/chat-room/:id' element={<CustomerChat uri={uri} />} />
         <Route path='/request-quote' element={<RequestQuote uri={uri} />} />
       </Routes>
+      {
+        location.pathname == '/admin-chat'
+        ?      
+        console.log()
+        :
+        location.pathname.includes('/chat-room')
+        ?
+        console.log()
+        :
+        <Footer />
+      }
     </div>
   );
 }
