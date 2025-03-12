@@ -1,5 +1,5 @@
 import * as React from 'react'
-import QuoteImage from '../assets/mission.png'
+import QuoteImage from '../assets/request_quote.png'
 import { useFormik } from 'formik'
 import { quoteSchema } from '../schema'
 import axios from 'axios'

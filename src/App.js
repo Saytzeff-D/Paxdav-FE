@@ -12,7 +12,7 @@ import CustomerChat from './pages/CustomerChat';
 
 function App() {
   const location = useLocation()
-  const uri = process.env.REACT_APP_BASEURL
+  const uri = 'http://localhost:1000/'
   return (
     <div>
       {

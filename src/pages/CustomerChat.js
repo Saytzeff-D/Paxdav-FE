@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import io from "socket.io-client";
 
-const socket = io(process.env.REACT_APP_BASEURL);
+const socket = io('http://localhost:1000/');
 
 const CustomerChat = (props) => {
   const { uri } = props
@@ -55,6 +55,7 @@ const CustomerChat = (props) => {
         };
       }else navigate('/request-quote')
     }).catch(err=>{
+      console.log(err)
       setIsVerifying(false)
       setError(true)
     })
@@ -92,9 +93,9 @@ const CustomerChat = (props) => {
           :
           !isVerifying && error
           ?
-          <div>
-            <p className="text-danger text-center fs-4 py-5">An Error has occured</p>
-            <Button onClick={()=>window.location.reload()} className='bg-quote text-white fw-bold'>Refresh Now</Button>
+          <div className="text-center">
+            <p className="text-danger text-center fs-4 pt-5">An Error has occured</p>
+            <Button onClick={()=>window.location.reload()} className='bg-dark text-white fw-bold'>Refresh Now</Button>
           </div>
           :
           messages.map((msg, index) => (
