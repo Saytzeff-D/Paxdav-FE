@@ -5,12 +5,14 @@ import Serv3 from '../assets/serv_3.png';
 import Serv4 from '../assets/serv_4.png';
 import Serv5 from '../assets/serv_5.png';
 import Serv6 from '../assets/serv_6.png';
+import { useNavigate } from "react-router-dom";
 
 const Expertise = () => {
+    const navigate = useNavigate()
     const baseServices = [
         { title: "Shopify Development", text: "Custom, responsive websites designed to make your brand shine online" },
-        { title: "E-commerce Solutions", text: "Seamless e-commerce solutions tailored to grow your business" },
-        { title: "SEO Optimization", text: "Boost your online presence with cutting-edge SEO strategies" }
+        { title: "Web Development", text: "Powerful, user-friendly e-commerce solutions for businesses of all sizes" },
+        { title: "Graphics Design", text: "Eye-catching visuals that resonate with your audience" }
     ];
 
     const images = [Serv1, Serv2, Serv3, Serv4, Serv5, Serv6];
@@ -35,7 +37,7 @@ const Expertise = () => {
                         <div className="card-body">
                             <h4 className="card-title">{service.title}</h4>
                             <p className="card-text text-muted">{service.text}</p>
-                            <a className="btn bg-quote text-white rounded-pill px-4">Request Quote</a>
+                            <a onClick={()=>navigate('/request-quote')} className="btn bg-quote text-white rounded-pill px-4">Request Quote</a>
                         </div>
                     </div>
                 </div>
