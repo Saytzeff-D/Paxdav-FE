@@ -8,6 +8,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import { useNavigate } from 'react-router-dom'
+import { Snackbar } from '@mui/material'
 
 const RequestQuote = (props)=>{
     const navigate = useNavigate()
@@ -25,6 +26,7 @@ const RequestQuote = (props)=>{
     const { uri } = props
     const [isLoading, setIsLoading] = React.useState(false)
     const [open, setOpen] = React.useState(false);
+    const [openSnack, setOpenSnack] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
     const [response, setResponse] = React.useState('')
@@ -40,9 +42,15 @@ const RequestQuote = (props)=>{
             handleOpen(true)            
         }
     })
+    const handleCloseSnack = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+    
+        setOpenSnack(false);
+        };
     const requestQuote = (values, type)=>{
-        values.type = type
-        console.log(values)
+        values.type = type        
         setIsLoading(true)
         axios.post(
             `${uri}quote/create`,
@@ -98,11 +106,21 @@ const RequestQuote = (props)=>{
                     Get a fast and secure quote on your preferred platform.
                 </Typography>
                 <div className='d-flex justify-content-around mt-4'>
-                    <Button onClick={()=>requestQuote(values, 'Upwork')} disabled={isLoading} className='bg-quote text-white fw-bold'>continue on Upwork</Button>
-                    <Button onClick={()=>requestQuote(values, 'Paxdav')} disabled={isLoading} className='fw-bold text-white'>stay on this platform</Button>
+                    <button onClick={()=>requestQuote(values, 'Upwork')} disabled={isLoading} className='btn bg-quote text-white fw-bold mx-2'>Continue on Upwork</button>
+                    <button onClick={()=>requestQuote(values, 'Paxdav')} disabled={isLoading} className='btn btn-dark fw-bold text-white mx-2'>
+                        {
+                            isLoading
+                            ?
+                            'Please wait...'
+                            :
+                            'Stay on this platform'
+                        }
+                    </button>
                 </div>
                 </Box>
             </Modal>
+
+            <Snackbar autoHideDuration={4000} message={response} onClose={handleCloseSnack} open={openSnack} />
         </div>
     )
 }
