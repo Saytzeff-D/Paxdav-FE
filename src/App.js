@@ -16,11 +16,15 @@ function App() {
   return (
     <div>
       {
-        location.pathname !== '/admin-chat'
-        ?
-        <Navbar />
-        :
+        location.pathname == '/admin-chat'
+        ?      
         console.log()
+        :
+        location.pathname.includes('/chat-room')
+        ?
+        console.log()
+        :
+        <Navbar />
       }
       <Routes>
         <Route path='/' element={<Home />} />
@@ -40,7 +44,7 @@ function App() {
         ?
         console.log()
         :
-        <Footer />
+        <Footer uri={uri} />
       }
     </div>
   );

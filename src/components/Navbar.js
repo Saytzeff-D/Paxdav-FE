@@ -1,5 +1,5 @@
 import React from 'react'
-import PaxDav from '../assets/PaxDav.png'
+import PaxDav from '../assets/paxdav.png'
 import { Link } from 'react-router-dom'
 
 const Navbar = ()=>{
