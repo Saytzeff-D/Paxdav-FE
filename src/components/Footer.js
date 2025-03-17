@@ -1,8 +1,40 @@
+import { Snackbar } from "@mui/material";
+import axios from "axios";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
-const Footer = ()=>{
+const Footer = (props)=>{
+    const { uri } = props
+    const [email, setEmail] = useState('')
     const [isSubscribing, setIsSubscribing] = useState(false)
+    const [open, setOpen] = useState(false);
+    const [message, setMessage] = useState('')
+
+    const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+        return;
+    }
+
+    setOpen(false);
+    };
+
+    const subscribeNow = ()=>{
+        if (email !== '') {
+            setIsSubscribing(true)
+            axios.post(`${uri}quote/subscribe`).then((resp)=>{
+                setMessage(resp.data.message)
+                setOpen(true)
+                setEmail('')
+                setIsSubscribing(false)
+            }).catch(()=>{
+                setMessage('Internal Server Error')
+                setOpen(true)
+                setIsSubscribing(false)
+            })
+        } else {
+            console.log('No input')
+        }
+    }
     return (
         <div className="footer">
             <hr className='container my-5' />
@@ -14,16 +46,16 @@ const Footer = ()=>{
                     <div className="col-md-8">                        
                         <div className="row w-100 mx-auto">
                             <div className="col-md-8 mb-2">
-                                <input placeholder="Email Address" className="bg-quote-input form-control col-10" />                                
+                                <input value={email} onChange={(e)=>setEmail(e.target.value)} placeholder="Email Address" className="bg-quote-input form-control col-10" />                                
                             </div>
                             <div className="col-md-4 mb-2">
-                                <button disabled={isSubscribing} className="btn bg-quote rounded-pill fw-bold text-white rounded-0 text-white">
+                                <button onClick={subscribeNow} disabled={isSubscribing} className="px-4 btn bg-quote rounded-pill fw-bold text-white rounded-0 text-white">
                                     {
                                         isSubscribing
                                         ?
                                         'Subscribing...'
                                         :
-                                        'Request Quote'
+                                        'Subscribe'
                                     }
                                 </button>
                             </div>
@@ -66,6 +98,8 @@ const Footer = ()=>{
             <p className="text-center text-white py-3">
                 CopyRight &copy; {new Date().getFullYear()}.
             </p>
+
+            <Snackbar autoHideDuration={4000} message={message} onClose={handleClose} open={open} />
         </div>
     )
 }
