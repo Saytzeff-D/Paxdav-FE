@@ -9,7 +9,14 @@ import { useLocation } from 'react-router-dom'
 
 const Portfolio = ()=>{
     const location = useLocation()
-    const port = [Port1, Port2, Port3, Port4, Port5, Port6]
+    const port = [
+        {type: 'Education', image: Port1},
+        {type: 'Business', image: Port2},
+        {type: 'Portfolio', image: Port3},
+        {type: 'Healthcare', image: Port4},
+        {type: 'Real Estate', image: Port5},
+        {type: 'E-commerce', image: Port6}
+    ]
     return (
         <div>
             {
@@ -37,10 +44,10 @@ const Portfolio = ()=>{
                         port.map((each, i)=>(
                             <div key={i} className='col-md-6 my-4'>
                                 <div className="card bg-dark">
-                                    <img className="card-img-top" src={each} alt="Card image" />
+                                    <img className="card-img-top" src={each.image} alt="Card image" />
                                     <div className="card-img-overlay">
                                         <div className='port-caption bg-white text-dark fs-5 text-uppercase fw-semibold px-2 py-3 rounded'>
-                                            Education Website
+                                            {each.type} Website
                                         </div>
                                     </div>
                                 </div>
