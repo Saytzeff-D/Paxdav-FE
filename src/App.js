@@ -9,14 +9,15 @@ import Home from './pages/Home';
 import AdminChat from './pages/AdminChat';
 import RequestQuote from './pages/RequestQuote';
 import CustomerChat from './pages/CustomerChat';
+import PaymentPage from './pages/PaymentPage';
 
 function App() {
   const location = useLocation()
-  const uri = 'http://localhost:1000/'
+  const uri = process.env.REACT_APP_BASEURL;
   return (
     <div>
       {
-        location.pathname == '/admin-chat'
+        location.pathname.includes('/admin-chat')
         ?      
         console.log()
         :
@@ -34,6 +35,7 @@ function App() {
         <Route path='/admin-chat' element={<AdminChat />} />
         <Route path='/chat-room/:id' element={<CustomerChat uri={uri} />} />
         <Route path='/request-quote' element={<RequestQuote uri={uri} />} />
+        <Route path='/payment' element={<PaymentPage />} />
       </Routes>
       {
         location.pathname == '/admin-chat'

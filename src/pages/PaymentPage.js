@@ -1,48 +1,42 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@mui/material";
-import { FlutterwaveButton, closePaymentModal } from "flutterwave-react-v3";
+import { FlutterWaveButton, closePaymentModal } from "flutterwave-react-v3";
 import CryptoJS from "crypto-js";
 
-const secretKey = "your-secret-key";
-
-const decryptData = (encryptedData) => {
-  const bytes = CryptoJS.AES.decrypt(encryptedData, secretKey);
-  return bytes.toString(CryptoJS.enc.Utf8);
-};
 
 const PaymentPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const secretKey = "your-secret-key";
+  let decryptedData = {};
   
-  let description = "";
-  let price = "";
   
-  if (location.state) {
-    description = decryptData(location.state.description);
-    price = decryptData(location.state.price);
+  if (location.state?.encryptedData) {
+    const bytes = CryptoJS.AES.decrypt(location.state.encryptedData, secretKey);
+    decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+    console.log(decryptedData)
   }
 
   const config = {
     public_key: "YOUR_FLUTTERWAVE_PUBLIC_KEY",
     tx_ref: Date.now(),
-    amount: price,
-    currency: "USD",
+    amount: decryptedData.price,
+    currency: decryptedData.currency,
     payment_options: "card, mobilemoney, ussd",
     customer: {
-      email: "customer@example.com",
-      phone_number: "1234567890",
-      name: "Customer Name",
+      email: decryptedData.email,      
+      name: decryptedData.name,
     },
     customizations: {
-      title: "Service Payment",
-      description: description,
+      title: decryptedData.title,
+      description: decryptedData.description,
       logo: "https://your-logo-url.com/logo.png",
     },
     callback: (response) => {
       console.log(response);
       closePaymentModal();
-      navigate("/chat");
+      navigate(`/chat-room/${decryptedData.id}`);
     },
     onClose: () => {
       console.log("Payment modal closed");
@@ -53,12 +47,12 @@ const PaymentPage = () => {
     <div className="container vh-100 d-flex flex-column justify-content-center align-items-center bg-light">
       <div className="card p-4 shadow" style={{ maxWidth: "400px", width: "100%" }}>
         <h4 className="mb-3 text-center">Confirm Payment</h4>
-        <p><strong>Offer:</strong> {description}</p>
-        <p><strong>Price:</strong> ${price}</p>
-        <FlutterwaveButton {...config} className="btn btn-success w-100 mt-3">
+        <p><strong>Offer:</strong> {decryptedData.description}</p>
+        <p><strong>Price:</strong> ${decryptedData.price}</p>
+        <FlutterWaveButton {...config} className="btn btn-success w-100 mt-3">
           Pay Now
-        </FlutterwaveButton>
-        <Button variant="outlined" className="w-100 mt-2" onClick={() => navigate("/chat")}>
+        </FlutterWaveButton>
+        <Button variant="outlined" className="w-100 mt-2" onClick={() =>navigate(`/chat-room/${decryptedData.id}`)}>
           Cancel
         </Button>
       </div>
