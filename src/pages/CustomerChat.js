@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import io from "socket.io-client";
 import CryptoJS from "crypto-js";
+import getSymbolFromCurrency from "currency-symbol-map";
 
 const socket = io(process.env.REACT_APP_BASEURL);
 
@@ -19,11 +20,15 @@ const CustomerChat = (props) => {
   const hasFetched = useRef(false)
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [user, setUser] = useState({})
+  const [rejecting, setRejecting] = useState(false)
 
   useEffect(() => {
     if(hasFetched.current) return;
     hasFetched.current = true;
     socket.emit("userOnline", params.id);
+    socket.on('offerStatus', (history)=>{
+      setMessages(history)
+    })
 
     axios.get(`${uri}quote/verify/${params.id}`).then(res=>{
       setIsVerifying(false)
@@ -33,16 +38,17 @@ const CustomerChat = (props) => {
         socket.on("messageHistory", (history) => {
           setMessages(history);
         });
-        socket.on("message", (message) => {          
+        socket.on("message", (message) => {   
+          setRejecting(false)       
           if (message.sender == params.id) {
             setMessages((prevMessages) => {
-              const isDuplicate = prevMessages.some(msg => msg.timestamp === message.timestamp && msg.text === message.text);
-              return isDuplicate ? prevMessages : [...prevMessages, message]
+              const isDuplicate = prevMessages.some(msg => msg.timestamp === message.timestamp && msg.text === message.text);              
+              return isDuplicate ? prevMessages.map(msg => msg._id === message._id && msg.type == 'offer' ? message : msg) : [...prevMessages, message]
             });
           } else if(message.receiver == params.id){
             setMessages((prevMessages) => {
               const isDuplicate = prevMessages.some(msg => msg.timestamp === message.timestamp && msg.text === message.text);
-              return isDuplicate ? prevMessages : [...prevMessages, message]
+              return isDuplicate ? prevMessages.map(msg => msg._id === message._id && msg.type == 'offer' ? message : msg) : [...prevMessages, message]
             });
           } else {
             console.log('Not my own message')
@@ -77,6 +83,11 @@ const CustomerChat = (props) => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  const rejectOffer = (id)=>{
+    setRejecting(true)
+    socket.emit('reject_offer', id)
+  }
+
   const navigateToPayment = (offer) => {
     const secretKey = "your-secret-key"; // Store this securely
     const data = {
@@ -86,7 +97,8 @@ const CustomerChat = (props) => {
       email: user.email,
       name: user.fullname,
       title: offer.title,
-      id: user._id
+      id: user._id,
+      msg_id: offer._id
     };
     const encryptedData = CryptoJS.AES.encrypt(
       JSON.stringify(data),
@@ -120,19 +132,54 @@ const CustomerChat = (props) => {
           </div>
           :
           messages.map((msg, index) => (
-            <div key={index} className={`d-flex ${msg.sender !== "Admin" ? "justify-content-end" : "justify-content-start"} mb-2`}>
-              <div className="p-3 rounded shadow-sm" style={{ backgroundColor: msg.sender !== "Admin" ? "#DCF8C6" : "#EAEAEA", maxWidth: "70%" }}>
+            <div key={index} className={`d-flex ${msg.sender !== "Admin" ? "justify-content-end" : "justify-content-start"} mb-2`}>              
                 {msg.type === "offer" ? (
-                  <div className="border p-2 rounded" style={{ backgroundColor: "#fff", borderLeft: "5px solid #ff9800" }}>
-                    <p className="mb-1"><strong>Offer:</strong> {msg.description}</p>
-                    <p className="mb-1"><strong>Price:</strong> ${msg.price}</p>
-                    <Button onClick={()=>navigateToPayment(msg)} variant="contained" color="success" size="small">Pay</Button>
+                  <div className="card shadow-sm" style={{ backgroundColor: "#fff", maxWidth: "70%" }}>
+                    <div className="card-header">
+                      <div className="d-flex justify-content-between">
+                        <div>
+                          {msg.title}
+                        </div>
+                        <div>
+                          {getSymbolFromCurrency(msg.currency) + msg.price}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="card-body">
+                      {msg.description}
+                    </div>
+                    <div className="card-footer d-flex justify-content-end">
+                      {
+                        msg.status && msg.status == 'withdrawn'
+                        ?
+                        <p className="text-muted">Offer Withdrawn</p>
+                        :
+                        msg.status && msg.status == 'accepted'
+                        ?
+                        <p className="text-muted">Offer Accepted</p>
+                        :
+                        msg.status && msg.status == 'rejected'
+                        ?
+                        <p className="text-muted">Offer Rejected</p>
+                        :
+                        <div>
+                          <button onClick={()=>navigateToPayment(msg)} className="btn btn-dark mx-2">
+                            Accept Offer
+                          </button>
+                          <button onClick={()=>rejectOffer(msg._id)} className="btn btn-outline-dark mx-2">
+                            Reject Offer
+                          </button>
+                        </div>
+                      }
+                    </div>                    
                   </div>
                 ) : (
-                  <p className="mb-0">{msg.text}</p>
+                  <div className="p-3 rounded shadow-sm" style={{ backgroundColor: msg.sender !== "Admin" ? "#DCF8C6" : "#EAEAEA", maxWidth: "70%" }}>
+                    <p className="mb-0">{msg.text}</p>
+                    <small className="text-muted d-block" style={{ fontSize: "0.75rem" }}>{new Date(msg.timestamp).toLocaleTimeString()}</small>
+                  </div>
                 )}
-                <small className="text-muted d-block" style={{ fontSize: "0.75rem" }}>{new Date(msg.timestamp).toLocaleTimeString()}</small>
-              </div>
+                
             </div>
           ))
         }

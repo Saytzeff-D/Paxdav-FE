@@ -3,7 +3,10 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@mui/material";
 import { FlutterWaveButton, closePaymentModal } from "flutterwave-react-v3";
 import CryptoJS from "crypto-js";
+import getSymbolFromCurrency from "currency-symbol-map";
+import { io } from "socket.io-client";
 
+const socket = io(process.env.REACT_APP_BASEURL)
 
 const PaymentPage = () => {
   const location = useLocation();
@@ -19,7 +22,7 @@ const PaymentPage = () => {
   }
 
   const config = {
-    public_key: "YOUR_FLUTTERWAVE_PUBLIC_KEY",
+    public_key: process.env.FLW_PUBLIC_KEY,
     tx_ref: Date.now(),
     amount: decryptedData.price,
     currency: decryptedData.currency,
@@ -29,12 +32,13 @@ const PaymentPage = () => {
       name: decryptedData.name,
     },
     customizations: {
-      title: decryptedData.title,
+      title: decryptedData.title.slice(0, 25),
       description: decryptedData.description,
-      logo: "https://your-logo-url.com/logo.png",
+      logo: process.env.REACT_APP_LOGO_URL,
     },
     callback: (response) => {
       console.log(response);
+      socket.emit('accept_offer', decryptedData.msg_id)
       closePaymentModal();
       navigate(`/chat-room/${decryptedData.id}`);
     },
@@ -46,9 +50,9 @@ const PaymentPage = () => {
   return (
     <div className="container vh-100 d-flex flex-column justify-content-center align-items-center bg-light">
       <div className="card p-4 shadow" style={{ maxWidth: "400px", width: "100%" }}>
-        <h4 className="mb-3 text-center">Confirm Payment</h4>
-        <p><strong>Offer:</strong> {decryptedData.description}</p>
-        <p><strong>Price:</strong> ${decryptedData.price}</p>
+        <h4 className="mb-3 text-center text-dark">Confirm Payment</h4>
+        <p className="text-dark"><strong>Offer:</strong> {decryptedData.description}</p>
+        <p className="text-dark"><strong>Price:</strong> {getSymbolFromCurrency(decryptedData.currency) + decryptedData.price}</p>
         <FlutterWaveButton {...config} className="btn btn-success w-100 mt-3">
           Pay Now
         </FlutterWaveButton>

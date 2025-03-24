@@ -13,7 +13,7 @@ import PaymentPage from './pages/PaymentPage';
 
 function App() {
   const location = useLocation()
-  const uri = process.env.REACT_APP_BASEURL;
+  const uri = process.env.REACT_APP_BASEURL
   return (
     <div>
       {
@@ -32,7 +32,7 @@ function App() {
         <Route path={'/about'} element={<AboutUs />} />
         <Route path='/portfolio' element={<Portfolio />} />
         <Route path='/services' element={<Services />} />
-        <Route path='/admin-chat' element={<AdminChat />} />
+        <Route path='/admin-chat' element={<AdminChat uri={uri} />} />
         <Route path='/chat-room/:id' element={<CustomerChat uri={uri} />} />
         <Route path='/request-quote' element={<RequestQuote uri={uri} />} />
         <Route path='/payment' element={<PaymentPage />} />
