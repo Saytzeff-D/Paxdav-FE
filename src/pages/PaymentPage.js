@@ -22,7 +22,7 @@ const PaymentPage = () => {
   }
 
   const config = {
-    public_key: process.env.FLW_PUBLIC_KEY,
+    public_key: process.env.REACT_APP_FLW,
     tx_ref: Date.now(),
     amount: decryptedData.price,
     currency: decryptedData.currency,
