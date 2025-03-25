@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
 
-const socket = io('http://localhost:1000/')
+const socket = io(process.env.REACT_APP_BASEURL);
+
 const PaymentStatus = ({uri}) => {
   const location = useLocation();
   const navigate = useNavigate();
