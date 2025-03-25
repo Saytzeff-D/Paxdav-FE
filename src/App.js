@@ -14,7 +14,7 @@ import PaymentStatus from './pages/PaymentStatus';
 
 function App() {
   const location = useLocation()
-  const uri = 'http://localhost:1000/'
+  const uri = process.env.REACT_APP_BASEURL
   return (
     <div>
       {
