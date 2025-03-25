@@ -21,6 +21,7 @@ const CustomerChat = (props) => {
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [user, setUser] = useState({})
   const [rejecting, setRejecting] = useState(false)
+  const [accepting, setAccepting] = useState(false)
 
   useEffect(() => {
     if(hasFetched.current) return;
@@ -89,22 +90,30 @@ const CustomerChat = (props) => {
   }
 
   const navigateToPayment = (offer) => {
+    setAccepting(true)
     const secretKey = "your-secret-key"; // Store this securely
-    const data = {
+    const payload = {
+      tx_ref: Date.now(),
       description: offer.description,
-      price: offer.price,
+      amount: offer.price,
       currency: offer.currency,
       email: user.email,
       name: user.fullname,
       title: offer.title,
       id: user._id,
-      msg_id: offer._id
+      offer_id: offer._id
     };
     const encryptedData = CryptoJS.AES.encrypt(
-      JSON.stringify(data),
+      JSON.stringify(payload),
       secretKey
     ).toString();
-    navigate("/payment", { state: { encryptedData } });
+    axios.post(`${uri}payment/initiate`, payload).then(resp=>{
+      let flwLink = resp.data.link
+      navigate("/payment", { state: { flwLink, encryptedData } });
+    }).catch(()=>{
+      setAccepting(false)
+      alert('An error has occured')
+    })
   };
   return (
     <div className="container-fluid vh-75 d-flex flex-column bg-light text-dark">
@@ -163,10 +172,10 @@ const CustomerChat = (props) => {
                         <p className="text-muted">Offer Rejected</p>
                         :
                         <div>
-                          <button onClick={()=>navigateToPayment(msg)} className="btn btn-dark mx-2">
+                          <button disabled={accepting} onClick={()=>navigateToPayment(msg)} className="btn btn-dark mx-2">
                             Accept Offer
                           </button>
-                          <button onClick={()=>rejectOffer(msg._id)} className="btn btn-outline-dark mx-2">
+                          <button disabled={rejecting} onClick={()=>rejectOffer(msg._id)} className="btn btn-outline-dark mx-2">
                             Reject Offer
                           </button>
                         </div>

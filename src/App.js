@@ -10,10 +10,11 @@ import AdminChat from './pages/AdminChat';
 import RequestQuote from './pages/RequestQuote';
 import CustomerChat from './pages/CustomerChat';
 import PaymentPage from './pages/PaymentPage';
+import PaymentStatus from './pages/PaymentStatus';
 
 function App() {
   const location = useLocation()
-  const uri = process.env.REACT_APP_BASEURL
+  const uri = 'http://localhost:1000/'
   return (
     <div>
       {
@@ -22,6 +23,10 @@ function App() {
         console.log()
         :
         location.pathname.includes('/chat-room')
+        ?
+        console.log()
+        :
+        location.pathname.includes('/payment')
         ?
         console.log()
         :
@@ -36,6 +41,7 @@ function App() {
         <Route path='/chat-room/:id' element={<CustomerChat uri={uri} />} />
         <Route path='/request-quote' element={<RequestQuote uri={uri} />} />
         <Route path='/payment' element={<PaymentPage />} />
+        <Route path='/payment-status' element={<PaymentStatus uri={uri} />} />
       </Routes>
       {
         location.pathname == '/admin-chat'
@@ -43,6 +49,10 @@ function App() {
         console.log()
         :
         location.pathname.includes('/chat-room')
+        ?
+        console.log()
+        :
+        location.pathname.includes('/payment')
         ?
         console.log()
         :

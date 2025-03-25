@@ -1,62 +1,62 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@mui/material";
-import { FlutterWaveButton, closePaymentModal } from "flutterwave-react-v3";
 import CryptoJS from "crypto-js";
 import getSymbolFromCurrency from "currency-symbol-map";
-import { io } from "socket.io-client";
-
-const socket = io(process.env.REACT_APP_BASEURL)
+import PaxDav from '../assets/navbar_brand.png'
 
 const PaymentPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const secretKey = "your-secret-key";
-  let decryptedData = {};
+  const [decryptedData, setDecryptedData] = useState({})
+  const [flutterwaveLink, setFlutterwaveLink] = useState('')
+  const flutterwaveFee = 1.4 / 100 * decryptedData.amount;  // Calculate fee
+  const vat = 7.5 / 100 * flutterwaveFee;        // Calculate VAT on fee
+  const totalDeduction = flutterwaveFee + vat;
   
-  
-  if (location.state?.encryptedData) {
-    const bytes = CryptoJS.AES.decrypt(location.state.encryptedData, secretKey);
-    decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-    console.log(decryptedData)
-  }
-
-  const config = {
-    public_key: 'FLWPUBK-adc3c8d7f82776cfe6af388233ef06b4-X',
-    tx_ref: Date.now(),
-    amount: decryptedData.price,
-    currency: decryptedData.currency,
-    payment_options: "card, mobilemoney, ussd",
-    customer: {
-      email: decryptedData.email,      
-      name: decryptedData.name,
-    },
-    customizations: {
-      title: decryptedData.title.slice(0, 25),
-      description: decryptedData.description,
-      logo: process.env.REACT_APP_LOGO_URL,
-    },
-    callback: (response) => {
-      console.log(response);
-      socket.emit('accept_offer', decryptedData.msg_id)
-      closePaymentModal();
-      navigate(`/chat-room/${decryptedData.id}`);
-    },
-    onClose: () => {
-      console.log("Payment modal closed");
-    },
-  };
+  useEffect(()=>{
+    if (location.state?.flwLink) {
+      console.log(location.state)
+      setFlutterwaveLink(location.state.flwLink)
+      const bytes = CryptoJS.AES.decrypt(location.state.encryptedData, secretKey);
+      setDecryptedData(JSON.parse(bytes.toString(CryptoJS.enc.Utf8)))    
+    }else navigate('/request-quote')
+  }, [])
 
   return (
-    <div className="container vh-100 d-flex flex-column justify-content-center align-items-center bg-light">
-      <div className="card p-4 shadow" style={{ maxWidth: "400px", width: "100%" }}>
-        <h4 className="mb-3 text-center text-dark">Confirm Payment</h4>
-        <p className="text-dark"><strong>Offer:</strong> {decryptedData.description}</p>
-        <p className="text-dark"><strong>Price:</strong> {getSymbolFromCurrency(decryptedData.currency) + decryptedData.price}</p>
-        <FlutterWaveButton {...config} className="btn btn-success w-100 mt-3">
+    <div className="container vh-100 d-flex flex-column justify-content-center align-items-center bg-white">
+      <div className="card p-4 shadow-lg border-0 rounded-4" style={{ maxWidth: "500px", width: "100%" }}>
+        <div className="text-center mb-4">
+          <div className="bg-dark">
+            <img src={PaxDav} alt="Logo" style={{ height: "50px" }} />
+          </div>
+          <h4 className="mt-2 text-dark fw-bold">Review & Confirm Payment</h4>
+        </div>
+        <div className="bg-light p-3 rounded-3 shadow-sm mb-3">
+          <h6 className="text-muted">Offer Details</h6>
+          <p className="text-dark fs-6 mb-1"><strong>{decryptedData.title}</strong></p>
+          <p className="text-dark fs-6 mb-1">{decryptedData.description}</p>
+        </div>
+        <div className="bg-light p-3 rounded-3 shadow-sm mb-3">
+          <h6 className="text-muted">Billing Details</h6>
+          <p className="text-dark fs-6 mb-1"><strong>Name:</strong> {decryptedData.name}</p>
+          <p className="text-dark fs-6 mb-1"><strong>Email:</strong> {decryptedData.email}</p>
+        </div>
+        <div className="bg-light p-3 rounded-3 shadow-sm mb-3">
+          <h6 className="text-muted">Payment Summary</h6>
+          <p className="text-dark fs-6 mb-1"><strong>Subtotal:</strong> {getSymbolFromCurrency(decryptedData.currency)}{decryptedData.amount}</p>
+          <p className="text-dark fs-6 mb-1"><strong>Transaction Fee + VAT:</strong> {getSymbolFromCurrency(decryptedData.currency)}{parseInt(totalDeduction)}</p>
+          <p className="text-dark fs-5 fw-bold mb-0"><strong>Total:</strong> {getSymbolFromCurrency(decryptedData.currency)}{parseInt(totalDeduction + parseInt(decryptedData.amount))}</p>
+        </div>
+        <button onClick={() => window.location.href = flutterwaveLink} className="btn btn-success w-100 mt-3">
           Pay Now
-        </FlutterWaveButton>
-        <Button variant="outlined" className="w-100 mt-2" onClick={() =>navigate(`/chat-room/${decryptedData.id}`)}>
+        </button>
+        <Button
+          variant="outlined"
+          className="w-100 mt-2 py-2 rounded-3 text-dark border-secondary"
+          onClick={() => navigate(`/chat-room/${decryptedData.id}`)}
+        >
           Cancel
         </Button>
       </div>
