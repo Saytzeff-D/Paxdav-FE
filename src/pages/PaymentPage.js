@@ -11,9 +11,8 @@ const PaymentPage = () => {
   const secretKey = "your-secret-key";
   const [decryptedData, setDecryptedData] = useState({})
   const [flutterwaveLink, setFlutterwaveLink] = useState('')
-  const flutterwaveFee = 1.4 / 100 * decryptedData.amount;  // Calculate fee
-  const vat = 7.5 / 100 * flutterwaveFee;        // Calculate VAT on fee
-  const totalDeduction = flutterwaveFee + vat;
+  const flutterwaveFee = decryptedData.currency == 'NGN' ? 1.4 / 100 * decryptedData.amount : 3.8 / 100 * decryptedData.amount
+  const vat = Math.ceil(7.5 / 100 * flutterwaveFee)
   
   useEffect(()=>{
     if (location.state?.flwLink) {
@@ -46,8 +45,8 @@ const PaymentPage = () => {
         <div className="bg-light p-3 rounded-3 shadow-sm mb-3">
           <h6 className="text-muted">Payment Summary</h6>
           <p className="text-dark fs-6 mb-1"><strong>Subtotal:</strong> {getSymbolFromCurrency(decryptedData.currency)}{decryptedData.amount}</p>
-          <p className="text-dark fs-6 mb-1"><strong>Transaction Fee + VAT:</strong> {getSymbolFromCurrency(decryptedData.currency)}{parseInt(totalDeduction)}</p>
-          <p className="text-dark fs-5 fw-bold mb-0"><strong>Total:</strong> {getSymbolFromCurrency(decryptedData.currency)}{parseInt(totalDeduction + parseInt(decryptedData.amount))}</p>
+          <p className="text-dark fs-6 mb-1"><strong>VAT:</strong> {getSymbolFromCurrency(decryptedData.currency)}{parseFloat(vat)}</p>
+          <p className="text-dark fs-5 fw-bold mb-0"><strong>Total:</strong> {getSymbolFromCurrency(decryptedData.currency)}{parseFloat(vat + parseFloat(decryptedData.amount))}</p>
         </div>
         <button onClick={() => window.location.href = flutterwaveLink} className="btn btn-success w-100 mt-3">
           Pay Now
