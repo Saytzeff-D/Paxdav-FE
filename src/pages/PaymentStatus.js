@@ -90,7 +90,14 @@ const PaymentStatus = ({uri}) => {
           <button className="btn btn-dark" onClick={() => navigate(`/chat-room/${userId}`)}>Go to Inbox</button>
         </div>
       )}
-      {status === "error" && <p>Something went wrong. Please try again.</p>}
+      {status === "error" && (
+        <div>
+          <p>Something went wrong. Please try again.</p>
+          <button onClick={() => window.location.reload()} className="btn btn-primary">
+            Refresh Now
+          </button>
+        </div>
+      )}
     </div>
   );
 };
